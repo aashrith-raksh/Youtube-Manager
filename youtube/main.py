@@ -1,13 +1,13 @@
+import copy
 import json
 from pathlib import Path
 from typing import List
 
 from models import Video
-from utils import get_video_details_from_user
+from utils import create_new_video, find_update_index, print_message, pretty_print
 
 
-
-def list_all_videos(videos:List[Video]) -> None:
+def list_all_videos(videos: List[Video]) -> None:
     print("\nList of all your videos\n")
     for index, video_entry in enumerate(videos, start=1):
         print(f"""{index}.  -----------------------------------
@@ -18,33 +18,53 @@ def list_all_videos(videos:List[Video]) -> None:
     """)
 
 
-def add_video(videos:List[Video]):
-    new_video = get_video_details_from_user()
-    videos.append(new_video)
-    print("\n\tNew video added\n")
-    save_videos(videos)
+def add_video(videos: List[Video]):
+    try:
+        copied_videos = copy.deepcopy(videos)
+        new_video = create_new_video()
+        copied_videos.append(new_video)
+        save_videos(copied_videos)
+    except Exception as error:
+        print("An error occurred:", error)
+    else:
+        print("\n\tVideo added successfully\n")
 
 
-def update_video(videos:List[Video]):
-    pass
+def update_video(videos: List[Video]):
+    try:
+        list_all_videos(videos)
+
+        user_update_index = find_update_index(videos)
+
+        if user_update_index == -1:
+            return
+
+        updated_video = create_new_video()
+
+        videos[user_update_index].update(updated_video)
+
+        save_videos(videos)
+    except Exception as error:
+        print("An error occurred:", error)
+    else:
+        print("\n\tVideo updated successfully\n")
 
 
-def delete_video(videos:List[Video]):
-    pass
+def delete_video(videos: List[Video]):
+    try:
+        user_delete_index = int(input("Enter the video number to delete: "))
+        if user_delete_index < 0 or user_delete_index >= len(videos):
+            print("\n\tYou entered invalid video number.")
+            return
+        updated_videos = [video_entry for index, video_entry in enumerate(videos) if index != user_delete_index]
+        save_videos(updated_videos)
+    except Exception as error:
+        print("An error occurred:", error)
+    else:
+        print_message("Video deleted successfully")
 
 
-def display_user_options():
-    print("""---------- YOUTUBE MANAGER ----------
-
-    1. List all videos
-    2. Add a video
-    3. Update a video
-    4. Delete a video
-    5. Exit the application
-    """)
-
-
-videos_file_path = Path("videos.json").resolve()
+videos_file_path = Path("./videos.json").resolve()
 
 
 def load_videos():
