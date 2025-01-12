@@ -1,4 +1,4 @@
-from models import Video
+from youtube_manager_file_system.models import Video
 
 
 def create_new_video() -> Video:

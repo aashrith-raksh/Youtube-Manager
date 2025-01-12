@@ -3,8 +3,8 @@ import json
 from pathlib import Path
 from typing import List
 
-from models import Video
-from utils import create_new_video, find_update_index, print_message, pretty_print
+from youtube_manager_file_system.models import Video
+from youtube_manager_file_system.utils import create_new_video, find_update_index, print_message
 
 
 def list_all_videos(videos: List[Video]) -> None:
